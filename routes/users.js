@@ -1,0 +1,149 @@
+const express = require("express");
+const router = express.Router();
+
+//login
+router.post("/api/users/login", (req, res) => {
+  const email = mysqlConnection.escape(req.body.email);
+  const pass = mysqlConnection.escape(req.body.pass);
+  console.log(`try to login ${email}`);
+  mysqlConnection.getConnection((err, connection) => {
+    connection.query(
+      `call userLogin(${email},${pass});`,
+      (errors, results, fields) => {
+        if (results[0].length == 0) {
+          res
+            .status(500)
+            .json({ err: "1x0001", msg: "email or password wrong" })
+            .end();
+        } else {
+          const userId = results[0][0]["id"];
+          if (results[0][0]["is_active"] == "0") {
+            res
+              .status(500)
+              .json({ err: "1x0002", msg: "user is not active" })
+              .end();
+          } else {
+            const token = jwt.sign({ id: userId }, constants.auth.key, {
+              expiresIn: 86400 * 10
+            });
+            res
+              .status(200)
+              .json({ user: results[0], token: token })
+              .end();
+          }
+        }
+      }
+    );
+    connection.release();
+  });
+});
+router.post("/api/users/token", (req, res) => {
+  const token = req.headers["x-access-token"];
+  jwt.verify(token, constants.auth.key, (err, decoded) => {
+    if (err) {
+      res
+        .status(500)
+        .json({ err: "1x0003", msg: "access token is expired" }) // auth error
+        .end();
+    } else {
+      const userId = mysqlConnection.escape(decoded["id"]);
+
+      mysqlConnection.getConnection((err, connection) => {
+        connection.query(`call userId(${userId});`, (err, results, feilds) => {
+          if (results[0].length == 0) {
+            res
+              .status(500)
+              .json({ err: "1x0004", msg: "id do not found" }) // auth error
+              .end();
+          } else {
+            res
+              .status(200)
+              .json({ user: results[0] })
+              .end();
+          }
+        });
+        connection.release();
+      });
+    }
+  });
+
+  console.log("check token");
+});
+router.post("/api/users/avatar/upload", (req, res) => {
+  var img = req.body.img;
+  console.log(img.length);
+  if (img == null) {
+    res
+      .status(500)
+      .json({ err: "1x0009", msg: "img isn't defined!" }) // auth error
+      .end();
+    return;
+  }
+  const token = req.headers["x-access-token"];
+  jwt.verify(token, constants.auth.key, (err, decoded) => {
+    if (err) {
+      res
+        .status(500)
+        .json({ err: "1x0003", msg: "access token is expired" }) // auth error
+        .end();
+    } else {
+      const userId = mysqlConnection.escape(decoded["id"]);
+
+      mysqlConnection.getConnection((err, connection) => {
+        if (err) {
+          res
+            .status(500)
+            .json({ err: "1x0006", msg: "database connection" })
+            .end();
+          return;
+        }
+        request.post(
+          {
+            headers: { "content-type": "application/x-www-form-urlencoded" },
+            url: "http://localhost:80/upload.php",
+            form: { image_base64: img }
+          },
+          function(error, response, body) {
+            if (error) {
+              res
+                .status(500)
+                .json({ err: "1x0007", msg: "cannot upload avatar to CDN" })
+                .end();
+            } else {
+              connection.query(
+                `insert into tbl_users_images (user_id,image) value ('${userId}','${body}');`,
+                (err, results, feilds) => {
+                  if (err) {
+                    res
+                      .status(500)
+                      .json({ err: "1x0008", msg: "database query error" })
+                      .end();
+                  } else {
+                    res
+                      .status(200)
+                      .json({ body: body })
+                      .end();
+                  }
+                }
+              );
+            }
+          }
+        );
+        connection.release();
+      });
+    }
+  });
+});
+//get users
+router.get("/api/users", (req, res) => {
+  mysqlConnection.getConnection((err, connection) => {
+    connection.query(`call users();`, (errors, results, fields) => {
+      res
+        .status(200)
+        .json({ users: results[0] })
+        .end();
+    });
+    connection.release();
+  });
+});
+module.exports = router;
