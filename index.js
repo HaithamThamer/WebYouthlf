@@ -30,10 +30,10 @@ const mysqlConnection = mysql.createPool({
 app = express();
 
 var firebase = require("firebase-admin");
-var serviceAccount = require("./flutterylf-firebase-adminsdk-pxds4-5d9166b881.json");
+var serviceAccount = require("./youthlf-2a7e6-firebase-adminsdk-zmm9f-87d27f0227.json");
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
-  databaseURL: "https://flutterylf.firebaseio.com"
+  databaseURL: "https://youthlf-2a7e6.firebaseio.com"
 });
 
 mysqlConnection.getConnection((err, connection) => {
@@ -51,8 +51,8 @@ global.uniqueName = uniqueName;
 global.constants = constants;
 
 //
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "5mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 app.use(auth);
 app.use(comments);
 app.use(info);

@@ -71,7 +71,7 @@ router.post("/api/users/token", (req, res) => {
 });
 router.post("/api/users/avatar/upload", (req, res) => {
   var img = req.body.img;
-  console.log(img.length);
+  var fileExtention = req.body.fileExtension;
   if (img == null) {
     res
       .status(500)
@@ -101,7 +101,7 @@ router.post("/api/users/avatar/upload", (req, res) => {
           {
             headers: { "content-type": "application/x-www-form-urlencoded" },
             url: "http://localhost:80/upload.php",
-            form: { image_base64: img }
+            form: { image_base64: img, file_extention: fileExtention }
           },
           function(error, response, body) {
             if (error) {
@@ -121,7 +121,7 @@ router.post("/api/users/avatar/upload", (req, res) => {
                   } else {
                     res
                       .status(200)
-                      .json({ body: body })
+                      .json({ ImageName: body })
                       .end();
                   }
                 }
@@ -136,6 +136,7 @@ router.post("/api/users/avatar/upload", (req, res) => {
 });
 //get users
 router.get("/api/users", (req, res) => {
+  console.log("users are gotten");
   mysqlConnection.getConnection((err, connection) => {
     connection.query(`call users();`, (errors, results, fields) => {
       res
@@ -143,6 +144,27 @@ router.get("/api/users", (req, res) => {
         .json({ users: results[0] })
         .end();
     });
+    connection.release();
+  });
+});
+router.post("/api/users/update", (req, res) => {
+  const userId = mysqlConnection.escape(req.body.userId);
+  const attribute = req.body.attribute;
+  const value = mysqlConnection.escape(req.body.value);
+
+  mysqlConnection.getConnection((err, connection) => {
+    console.log(
+      `update tbl_users set ${attribute} = ${value} where id = ${userId} `
+    );
+    connection.query(
+      `update tbl_users set ${attribute} = ${value} where id = ${userId} `,
+      (errors, results, fields) => {
+        res
+          .status(200)
+          .json({ users: results[0] })
+          .end();
+      }
+    );
     connection.release();
   });
 });

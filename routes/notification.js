@@ -3,6 +3,10 @@ const router = express.Router();
 
 router.post("/api/notifications/send", (req, res) => {
   const token = req.headers["x-access-token"];
+  const title = req.body.title == null ? "" : req.body.title;
+  const label = req.body.label == null ? "" : req.body.label;
+  const body = req.body.body == null ? "" : req.body.body;
+  const firebaseToken = req.body.firebaseToken;
   if (token == null) {
     res
       .status(500)
@@ -16,6 +20,7 @@ router.post("/api/notifications/send", (req, res) => {
         .status(500)
         .json({ err: "2x0002", msg: "access token is expired" }) // auth error
         .end();
+      return;
     }
     const userId = decoded["id"];
     mysqlConnection.getConnection((err, connection) => {
@@ -37,12 +42,9 @@ router.post("/api/notifications/send", (req, res) => {
               .end();
             return;
           }
-          const title = req.body.title == null ? "" : req.body.title;
-          const label = req.body.label == null ? "" : req.body.label;
-          const body = req.body.body == null ? "" : req.body.body;
           firebase
             .messaging()
-            .sendToDevice(process.env.firebase_token, {
+            .sendToDevice(firebaseToken, {
               notification: {
                 title: title,
                 label: label,
