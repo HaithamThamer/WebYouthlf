@@ -1,5 +1,15 @@
 const express = require("express");
 const router = express.Router();
+global.checkToken = token => {
+  var userId = null;
+  jwt.verify(token, constants.auth.key, (err, decoded) => {
+    if (err) {
+      return userId;
+    }
+    userId = decoded["id"];
+  });
+  return userId;
+};
 router.post("/api/auth/create", (req, res) => {
   const email = req.body.email;
   const pass = req.body.pass;

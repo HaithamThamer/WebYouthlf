@@ -14,9 +14,10 @@ const constants = require("./config/constants"),
   auth = require("./routes/auth"),
   comments = require("./routes/comments"),
   info = require("./routes/info"),
+  program = require("./routes/program"),
   notification = require("./routes/notification"),
   platforms = require("./routes/platforms"),
-  posts = require("./routes/users"),
+  posts = require("./routes/posts"),
   sponsors = require("./routes/sponsors"),
   trainers = require("./routes/trainers"),
   users = require("./routes/users");
@@ -28,7 +29,6 @@ const mysqlConnection = mysql.createPool({
   database: constants.mysql.database
 });
 app = express();
-
 var firebase = require("firebase-admin");
 var serviceAccount = require("./youthlf-2a7e6-firebase-adminsdk-zmm9f-87d27f0227.json");
 firebase.initializeApp({
@@ -62,4 +62,5 @@ app.use(posts);
 app.use(sponsors);
 app.use(trainers);
 app.use(users);
+app.use(program);
 app.listen(constants.express.port, () => {});

@@ -1,7 +1,18 @@
 const express = require("express");
 const router = express.Router();
 //get platforms
-router.get("/api/platforms", (req, res) => {
+router.post("/api/platforms", (req, res) => {
+  const token = req.headers["x-access-token"];
+
+  //
+  const userId = checkToken(token);
+  if (!userId) {
+    res
+      .status(500)
+      .json({ err: "4x0001", msg: "token error" })
+      .end();
+    return;
+  }
   mysqlConnection.getConnection((err, connection) => {
     connection.query(`call platforms();`, (errors, results, fields) => {
       res

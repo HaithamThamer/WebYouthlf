@@ -26,6 +26,12 @@ router.post("/api/users/login", (req, res) => {
             const token = jwt.sign({ id: userId }, constants.auth.key, {
               expiresIn: 86400 * 10
             });
+            connection.query(
+              `update tbl_users set firebase_token = '${
+                req.body.firebaseToken
+              }' where id = ${userId}`,
+              (errors, results, fields) => {}
+            );
             res
               .status(200)
               .json({ user: results[0], token: token })
@@ -153,9 +159,6 @@ router.post("/api/users/update", (req, res) => {
   const value = mysqlConnection.escape(req.body.value);
 
   mysqlConnection.getConnection((err, connection) => {
-    console.log(
-      `update tbl_users set ${attribute} = ${value} where id = ${userId} `
-    );
     connection.query(
       `update tbl_users set ${attribute} = ${value} where id = ${userId} `,
       (errors, results, fields) => {
