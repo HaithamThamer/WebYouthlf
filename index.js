@@ -20,6 +20,7 @@ const constants = require("./config/constants"),
   posts = require("./routes/posts"),
   sponsors = require("./routes/sponsors"),
   trainers = require("./routes/trainers"),
+  gallery = require("./routes/gallery"),
   users = require("./routes/users");
 
 const mysqlConnection = mysql.createPool({
@@ -63,4 +64,5 @@ app.use(sponsors);
 app.use(trainers);
 app.use(users);
 app.use(program);
+app.use(gallery);
 app.listen(constants.express.port, () => {});

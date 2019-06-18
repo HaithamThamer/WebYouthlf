@@ -17,7 +17,7 @@ router.post("/api/sponsors", (req, res) => {
     connection.query(`call sponsors();`, (errors, results, fields) => {
       res
         .status(200)
-        .json({ platforms: results[0] })
+        .json({ sponsors: results[0] })
         .end();
     });
     connection.release();
