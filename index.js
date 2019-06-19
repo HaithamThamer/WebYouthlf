@@ -66,3 +66,9 @@ app.use(users);
 app.use(program);
 app.use(gallery);
 app.listen(constants.express.port, () => {});
+app.get("/", (req, res) => {
+  res
+    .status(200)
+    .send("Youthlf REST API")
+    .end();
+});
