@@ -6,10 +6,12 @@ router.post("/api/users/login", (req, res) => {
   const email = mysqlConnection.escape(req.body.email);
   const pass = mysqlConnection.escape(req.body.pass);
   console.log(`try to login ${email}`);
+
   mysqlConnection.getConnection((err, connection) => {
     connection.query(
       `call userLogin(${email},${pass});`,
       (errors, results, fields) => {
+        console.log(`call userLogin(${email},${pass});`);
         if (results[0].length == 0) {
           res
             .status(500)
