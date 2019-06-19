@@ -108,7 +108,7 @@ router.post("/api/users/avatar/upload", (req, res) => {
         request.post(
           {
             headers: { "content-type": "application/x-www-form-urlencoded" },
-            url: "http://localhost:80/upload.php",
+            url: constants.Server.CDN + "/upload.php",
             form: { image_base64: img, file_extention: fileExtention }
           },
           function(error, response, body) {
