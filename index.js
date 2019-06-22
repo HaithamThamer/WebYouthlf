@@ -33,10 +33,10 @@ const mysqlConnection = mysql.createPool({
   multipleStatements: true
 });
 let mailTransporter = nodemailer.createTransport({
-  service: "gmail",
+  service: constants.gmail.service,
   auth: {
-    user: "haithamtalhaji@gmail.com",
-    pass: "freeWeb@@3"
+    user: constants.gmail.email,
+    pass: constants.gmail.password
   }
   // host: "mail.haitham.xyz",
   // port: 465,
