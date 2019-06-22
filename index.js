@@ -9,6 +9,7 @@ const constants = require("./config/constants"),
   mysql = require("mysql"),
   jwt = require("jsonwebtoken"),
   bodyParser = require("body-parser"),
+  nodemailer = require("nodemailer"),
   request = require("request"),
   uniqueName = require("unique-filename"),
   auth = require("./routes/auth"),
@@ -21,13 +22,28 @@ const constants = require("./config/constants"),
   sponsors = require("./routes/sponsors"),
   trainers = require("./routes/trainers"),
   gallery = require("./routes/gallery"),
+  mail = require("./routes/mail"),
   users = require("./routes/users");
 
 const mysqlConnection = mysql.createPool({
   host: constants.mysql.host,
   user: constants.mysql.username,
   password: constants.mysql.password,
-  database: constants.mysql.database
+  database: constants.mysql.database,
+  multipleStatements: true
+});
+let mailTransporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "haithamtalhaji@gmail.com",
+    pass: "freeWeb@@3"
+  }
+  // host: "mail.haitham.xyz",
+  // port: 465,
+  // auth: {
+  //   user: "no-reply@haitham.xyz",
+  //   pass: "123123"
+  // }
 });
 app = express();
 var firebase = require("firebase-admin");
@@ -44,6 +60,7 @@ mysqlConnection.getConnection((err, connection) => {
 
 //
 global.mysqlConnection = mysqlConnection;
+global.mailTransporter = mailTransporter;
 global.jwt = jwt;
 global.constants = constants;
 global.firebase = firebase;
@@ -65,6 +82,7 @@ app.use(trainers);
 app.use(users);
 app.use(program);
 app.use(gallery);
+app.use(mail);
 app.listen(constants.express.port, () => {});
 app.get("/", (req, res) => {
   res

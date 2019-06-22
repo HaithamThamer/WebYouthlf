@@ -18,5 +18,10 @@ module.exports = {
   oneSignal: {
     AppId: process.env.oneSignal_appId,
     RestApi: process.env.oneSignal_restApi
+  },
+  gmail: {
+    service: process.env.gmail_service,
+    email: process.env.gmail_email,
+    password: process.env.gmail_password
   }
 };

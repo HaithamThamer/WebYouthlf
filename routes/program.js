@@ -17,7 +17,7 @@ router.post("/api/program", (req, res) => {
 
   mysqlConnection.getConnection((err, connection) => {
     connection.query(
-      "SELECT program.creation,(SELECT GROUP_CONCAT(p.id,'^',p.title,'^',p.content,'^',p.image,'^',p.creation,'^',p.user_id) FROM tbl_program p WHERE DATE(creation) =  DATE(program.creation) ) AS `result` FROM tbl_program program WHERE program.creation >= current_timestamp GROUP BY day(creation)",
+      "SET SESSION group_concat_max_len = 1000000;SELECT DATE(program.creation) AS `creation`, ( SELECT GROUP_CONCAT(DISTINCT p.id,'^',p.title,'^',if(p.content = '','-',IFNULL(p.content,'-')),'^',p.image,'^',p.creation,'^',p.user_id  ORDER BY DATE(p.creation) ASC,TIME(p.creation) asc SEPARATOR ',') FROM tbl_program p WHERE DATE(p.creation) = DATE(program.creation) ) AS `result` FROM tbl_program program GROUP BY DAY(program.creation)",
       (err, result, field) => {
         if (err) {
           res

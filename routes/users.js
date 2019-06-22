@@ -173,4 +173,41 @@ router.post("/api/users/update", (req, res) => {
     connection.release();
   });
 });
+router.post("/api/users/forgetPassword", (req, res) => {
+  const userEmail = mysqlConnection.escape(req.body.email);
+  if (!userEmail.includes("@")) {
+    res
+      .status(500)
+      .json({ err: "1x0010", msg: "it is not an email" })
+      .end();
+    return;
+  }
+  mysqlConnection.getConnection((err, connection) => {
+    connection.query(
+      `select phone as \`phone\` from tbl_users where email = ${userEmail};`,
+      (errors, results, fields) => {
+        if (results.length > 0) {
+          sendPassword({
+            from: constants.gmail.email,
+            to: req.body.email,
+            subject: "الملتقى القيادي الخامس | كلمة المرور",
+            text: results[0]["phone"]
+          });
+          res
+            .status(200)
+            .json({ msg: "email has sent" })
+            .end();
+          return;
+        } else {
+          res
+            .status(500)
+            .json({ err: "1x0011", msg: "email isn't found" })
+            .end();
+          return;
+        }
+      }
+    );
+    connection.release();
+  });
+});
 module.exports = router;
