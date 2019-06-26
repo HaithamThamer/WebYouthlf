@@ -151,8 +151,6 @@ router.post("/api/posts/delete", (req, res) => {
         .json({ err: "3x0002", msg: "access token is expired" }) // auth error
         .end();
     } else {
-      const userId = mysqlConnection.escape(decoded["id"]);
-      content = mysqlConnection.escape(content);
       mysqlConnection.getConnection((err, connection) => {
         if (err) {
           res
