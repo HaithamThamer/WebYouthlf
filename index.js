@@ -32,7 +32,7 @@ const mysqlConnection = mysql.createPool({
   database: constants.mysql.database,
   multipleStatements: true
 });
-nodemailer.createTransport({
+let mailTransporter = nodemailer.createTransport({
   host: "mail.youthlf.com",
   port: 25,
   secure: false, // upgrade later with STARTTLS
