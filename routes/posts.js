@@ -132,4 +132,55 @@ router.post("/api/posts", (req, res) => {
     connection.release();
   });
 });
+router.post("/api/posts/delete", (req, res) => {
+  var postId = req.body.postId;
+  const firebaseToken = req.body.firebaseToken;
+  if (postId == null) {
+    res
+      .status(500)
+      .json({ err: "3x0001", msg: "postId isn't defined!" }) // auth error
+      .end();
+    return;
+  }
+
+  const token = req.headers["x-access-token"];
+  jwt.verify(token, constants.auth.key, (err, decoded) => {
+    if (err) {
+      res
+        .status(500)
+        .json({ err: "3x0002", msg: "access token is expired" }) // auth error
+        .end();
+    } else {
+      const userId = mysqlConnection.escape(decoded["id"]);
+      content = mysqlConnection.escape(content);
+      mysqlConnection.getConnection((err, connection) => {
+        if (err) {
+          res
+            .status(500)
+            .json({ err: "3x0003", msg: "error in database connection" })
+            .end();
+          return;
+        }
+
+        connection.query(
+          `delete from tbl_posts where id = '${postId}';`,
+          (errors, results, fields) => {
+            if (errors) {
+              res
+                .status(500)
+                .json({ err: "3x0004", msg: "error in database query" })
+                .end();
+              return;
+            }
+            res
+              .status(200)
+              .json({ msg: results })
+              .end();
+          }
+        );
+        connection.release();
+      });
+    }
+  });
+});
 module.exports = router;
