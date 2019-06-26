@@ -33,12 +33,12 @@ const mysqlConnection = mysql.createPool({
   multipleStatements: true
 });
 let mailTransporter = nodemailer.createTransport({
-  host: "mail.youthlf.com",
-  port: 25,
+  host: constants.mail.host,
+  port: constants.mail.port,
   secure: false, // upgrade later with STARTTLS
   auth: {
-    user: "no-reply@youthlf.com",
-    pass: "123123"
+    user: constants.mail.user,
+    pass: constants.mail.pass
   },
   tls: {
     // do not fail on invalid certs
