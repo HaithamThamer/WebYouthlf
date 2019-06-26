@@ -39,6 +39,10 @@ let mailTransporter = nodemailer.createTransport({
   auth: {
     user: "no-reply@youthlf.com",
     pass: "123123"
+  },
+  tls: {
+    // do not fail on invalid certs
+    rejectUnauthorized: false
   }
 });
 // let mailTransporter = nodemailer.createTransport({
