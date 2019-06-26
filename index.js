@@ -45,7 +45,6 @@ let mailTransporter = nodemailer.createTransport({
   //   pass: "123123"
   // }
 });
-console.log(mailTransporter);
 app = express();
 var firebase = require("firebase-admin");
 var serviceAccount = require("./youthlf-2a7e6-firebase-adminsdk-zmm9f-87d27f0227.json");
