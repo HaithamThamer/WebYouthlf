@@ -188,7 +188,7 @@ router.post("/api/users/forgetPassword", (req, res) => {
       (errors, results, fields) => {
         if (results.length > 0) {
           sendPassword({
-            from: constants.gmail.email,
+            from: "no-reply@youthlf.com",
             to: req.body.email,
             subject: "الملتقى القيادي الخامس | كلمة المرور",
             text: results[0]["phone"]
