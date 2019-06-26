@@ -3,6 +3,7 @@ const router = express.Router();
 
 global.sendPassword = mailOptions => {
   mailTransporter.sendMail(mailOptions, function(error, info) {
+    console.log(mailOptions);
     if (error) {
       console.log(error);
     } else {
