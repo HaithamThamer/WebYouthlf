@@ -134,7 +134,6 @@ router.post("/api/posts", (req, res) => {
 });
 router.post("/api/posts/delete", (req, res) => {
   var postId = req.body.postId;
-  const firebaseToken = req.body.firebaseToken;
   if (postId == null) {
     res
       .status(500)
@@ -145,12 +144,14 @@ router.post("/api/posts/delete", (req, res) => {
 
   const token = req.headers["x-access-token"];
   jwt.verify(token, constants.auth.key, (err, decoded) => {
+    console.log(`1111`);
     if (err) {
       res
         .status(500)
         .json({ err: "3x0002", msg: "access token is expired" }) // auth error
         .end();
     } else {
+      console.log(`22222`);
       mysqlConnection.getConnection((err, connection) => {
         if (err) {
           res
