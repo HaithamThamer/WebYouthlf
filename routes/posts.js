@@ -161,7 +161,7 @@ router.post("/api/posts/delete", (req, res) => {
             .end();
           return;
         }
-
+        console.log(`delete from tbl_posts where id = '${postId}';`);
         connection.query(
           `delete from tbl_posts where id = '${postId}';`,
           (errors, results, fields) => {
