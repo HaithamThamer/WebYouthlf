@@ -32,19 +32,28 @@ const mysqlConnection = mysql.createPool({
   database: constants.mysql.database,
   multipleStatements: true
 });
-let mailTransporter = nodemailer.createTransport({
-  service: constants.gmail.service,
+nodemailer.createTransport({
+  host: "mail.youthlf.com",
+  port: 25,
+  secure: false, // upgrade later with STARTTLS
   auth: {
-    user: constants.gmail.email,
-    pass: constants.gmail.password
+    user: "no-reply@youthlf.com",
+    pass: "123123"
   }
-  // host: "mail.haitham.xyz",
-  // port: 465,
-  // auth: {
-  //   user: "no-reply@haitham.xyz",
-  //   pass: "123123"
-  // }
 });
+// let mailTransporter = nodemailer.createTransport({
+//   service: constants.gmail.service,
+//   auth: {
+//     user: constants.gmail.email,
+//     pass: constants.gmail.password
+//   }
+//   // host: "mail.haitham.xyz",
+//   // port: 465,
+//   // auth: {
+//   //   user: "no-reply@haitham.xyz",
+//   //   pass: "123123"
+//   // }
+// });
 app = express();
 var firebase = require("firebase-admin");
 var serviceAccount = require("./youthlf-2a7e6-firebase-adminsdk-zmm9f-87d27f0227.json");
